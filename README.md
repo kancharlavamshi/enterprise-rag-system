@@ -126,7 +126,7 @@ Response: answer + [SOURCE_N] citations + confidence
 
 ```bash
 # 1. Clone
-git clone https://github.com/YOUR_USERNAME/enterprise-rag-system.git
+git clone https://github.com/kancharlavamshi/enterprise-rag-system.git
 cd enterprise-rag-system
 
 # 2. Install dependencies
@@ -217,31 +217,32 @@ enterprise-rag-system/
 
 ## Security
 
-### Currently Implemented
+### Implemented in v1 (this repo)
 | Feature | Details |
 |---|---|
-| Password hashing | PBKDF2-SHA256, 100k iterations, unique salt per user |
-| Session cookies | `httponly=True`, `samesite=lax` (CSRF protection) |
 | RBAC — two layers | Router blocks denied sources + ChromaDB metadata pre-filter |
-| Admin approval gate | No user gets access without manual admin approval via email |
 | SQL injection prevention | Users never write SQL — GPT-4o-mini generates SELECT-only queries |
 | Secrets management | All keys via `.env`, never hardcoded |
 
-### Planned (v2)
-- [ ] HTTPS with SSL/TLS (self-signed for local, Let's Encrypt for cloud)
-- [ ] Login rate limiting — max 5 attempts per IP per minute
-- [ ] Session expiry — auto-logout after 24 hours
-- [ ] Input sanitization — XSS stripping on all query inputs
-- [ ] CORS policy — restrict API calls to allowed origins only
-- [ ] Security headers — X-Frame-Options, X-Content-Type-Options, CSP
-- [ ] Account lockout — temporary ban after repeated failed logins
-- [ ] Audit log — every query logged with user, timestamp, sources accessed
+### Added in v2 (private)
+- [x] Login + registration with password hashing (PBKDF2-SHA256, 100k iterations, unique salt)
+- [x] Session cookies — `httponly=True`, `samesite=lax` (CSRF protection)
+- [x] Admin approval gate — no user gets access without manual admin approval via email
+- [x] Audit log — every query logged with user, timestamp, sources accessed
+
+### Added in v3 (private)
+- [x] Login rate limiting — max 5 attempts per IP per minute
+- [x] Session expiry — auto-logout after 24 hours
+- [x] Input sanitization — XSS stripping on all query inputs
+- [x] CORS policy — restrict API calls to allowed origins only
+- [x] Security headers — X-Frame-Options, X-Content-Type-Options, CSP
+- [x] Account lockout — temporary ban after repeated failed logins
 
 ---
 
 ## Roadmap
 
-- [ ] HTTPS + production security hardening (see above)
+- [ ] HTTPS with SSL/TLS (self-signed for local, Let's Encrypt for cloud)
 - [ ] Support for real PDF uploads (PyPDF2 / pdfplumber)
 - [ ] Vector store refresh API — re-index without restart
 - [ ] Multi-tenancy — isolate data per organisation
