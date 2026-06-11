@@ -10,7 +10,7 @@
 |---------|------|--------|---------|
 | **v1 — Demo** | Public (this repo) | ✅ Live | RAG pipeline, RBAC, multi-source retrieval, citations, explainability |
 | **v2 — Production Auth** | Private | ✅ Built | + Login, registration, admin email approval, session management |
-| **v3 — Security Hardening** | Private | 🔧 In Progress | + HTTPS, rate limiting, session expiry, CORS, security headers, audit logs |
+| **v3 — Security Hardening** | Private | ✅ Built | + Rate limiting, session expiry, input sanitization, CORS, security headers |
 
 > 📩 **Want access to v2 or v3?** Open an issue or email `krishnedit3@gmail.com` with your use case.
 
@@ -140,7 +140,7 @@ cp .env.example .env
 python setup_data.py
 
 # 5. Start the server
-python -m uvicorn app:app --reload --port 8000
+python -m uvicorn app_demo:app --reload --port 8000
 
 # 6. Open the UI
 open http://localhost:8000
@@ -188,7 +188,7 @@ open http://localhost:8000
 
 ```
 enterprise-rag-system/
-├── app.py                   # FastAPI application + frontend serving
+├── app_demo.py              # FastAPI application — demo version (v1)
 ├── config.py                # RBAC policies, users, model config
 ├── setup_data.py            # Synthetic data generation + vector indexing
 ├── demo.py                  # CLI demo (rich terminal output)
