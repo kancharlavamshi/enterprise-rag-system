@@ -1,0 +1,48 @@
+
+ACME CORP — TECHNICAL ARCHITECTURE OVERVIEW (2024)
+
+INFRASTRUCTURE OVERVIEW
+Cloud Provider: AWS (primary), GCP (DR)
+Regions: us-east-1 (primary), us-west-2 (failover)
+Uptime SLA: 99.95% (approximately 4.4 hours downtime/year)
+
+MICROSERVICES ARCHITECTURE
+Services are containerised (Docker) and orchestrated via Kubernetes (EKS).
+Service mesh: Istio for inter-service communication and mTLS.
+API Gateway: Kong — handles auth, rate limiting, and routing.
+Total microservices: 47 across 6 domains.
+
+CORE DOMAINS
+1. Identity & Access:  AuthService, RoleService, TokenService
+2. Customer Platform:  AccountService, ProfileService, BillingService
+3. Product Engine:     CatalogService, SearchService, RecommendationService
+4. Data Pipeline:      IngestionService, TransformService, ExportService
+5. Notification Hub:   EmailService, SMSService, WebhookService
+6. Analytics:          MetricsService, ReportService, DashboardService
+
+CI/CD PIPELINE
+Source control: GitHub Enterprise
+Build: GitHub Actions → Docker build → ECR push
+Deploy: ArgoCD (GitOps) → EKS
+Testing: unit (Jest/pytest), integration (Testcontainers), e2e (Playwright)
+Release cadence: weekly for features, daily for hotfixes.
+
+DATABASES
+PostgreSQL 15 (RDS) — transactional data
+MongoDB 6 (Atlas) — document storage, event logs
+Redis 7 (ElastiCache) — caching, sessions
+Elasticsearch 8 — search and log aggregation
+Snowflake — data warehouse / analytics
+
+OBSERVABILITY STACK
+Metrics: Prometheus + Grafana
+Logs: FluentBit → Elasticsearch → Kibana
+Traces: OpenTelemetry → Jaeger
+Alerting: PagerDuty (Sev1/2), Slack (Sev3/4)
+MTTR target: < 30 minutes for Sev1 incidents.
+
+API STANDARDS
+REST APIs: OpenAPI 3.1 specs mandatory. Versioning via URL path (/v1/, /v2/).
+GraphQL: used by customer-facing portal only.
+Event streaming: Kafka (MSK) for async workflows.
+gRPC: used for internal high-throughput service-to-service calls.

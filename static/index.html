@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enterprise RAG Intelligence System</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%);
+      border-bottom: 1px solid #2d3748;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    header .logo {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    header h1 { font-size: 1.25rem; font-weight: 700; color: #f7fafc; }
+    header p  { font-size: 0.78rem; color: #718096; margin-top: 2px; }
+    .header-badge {
+      margin-left: auto;
+      background: #1a365d;
+      border: 1px solid #2b6cb0;
+      color: #90cdf4;
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar { display: flex; flex-direction: column; gap: 18px; }
+
+    .card {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .card-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #718096;
+      margin-bottom: 12px;
+    }
+
+    /* User selector */
+    .user-select {
+      width: 100%;
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      outline: none;
+    }
+    .user-select:focus { border-color: #667eea; }
+
+    .user-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: #2d3748;
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+    .user-info .name { font-weight: 600; color: #f7fafc; margin-bottom: 6px; }
+    .user-info .dept { color: #a0aec0; margin-bottom: 8px; }
+
+    .role-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .role-admin            { background: #553c9a; color: #e9d8fd; }
+    .role-hr_manager       { background: #2c7a7b; color: #b2f5ea; }
+    .role-finance_analyst  { background: #744210; color: #fefcbf; }
+    .role-engineer         { background: #1a365d; color: #bee3f8; }
+    .role-compliance_officer{ background: #22543d; color: #c6f6d5; }
+    .role-employee         { background: #3d3d3d; color: #e2e8f0; }
+
+    /* Permissions list */
+    .perm-list {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
+    }
+    .perm-tag {
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      color: #a0aec0;
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* ── Main panel ── */
+    .main { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Query box */
+    .query-box { display: flex; flex-direction: column; gap: 10px; }
+    textarea {
+      width: 100%;
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      color: #e2e8f0;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      resize: vertical;
+      min-height: 90px;
+      outline: none;
+      font-family: inherit;
+      line-height: 1.5;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: #667eea; }
+    textarea::placeholder { color: #4a5568; }
+
+    .query-footer { display: flex; align-items: center; gap: 10px; }
+    .btn-submit {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Sample queries */
+    .samples { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sample-btn {
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      color: #a0aec0;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 0.73rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sample-btn:hover { background: #4a5568; color: #e2e8f0; }
+
+    /* ── Loading ── */
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 10px;
+      color: #718096;
+      font-size: 0.85rem;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid #4a5568;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result card ── */
+    .result { display: none; flex-direction: column; gap: 16px; }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .meta-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .pill-intent    { background: #1a365d; color: #90cdf4; border: 1px solid #2b6cb0; }
+    .pill-source    { background: #1c4532; color: #9ae6b4; border: 1px solid #276749; }
+    .pill-denied    { background: #4a1515; color: #feb2b2; border: 1px solid #742a2a; }
+    .pill-chunks    { background: #2d2d2d; color: #a0aec0; border: 1px solid #4a5568; }
+    .pill-latency   { background: #2d2d2d; color: #a0aec0; border: 1px solid #4a5568; }
+
+    .conf-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .conf-HIGH   { background: #1c4532; color: #68d391; border: 1px solid #276749; }
+    .conf-MEDIUM { background: #744210; color: #f6ad55; border: 1px solid #975a16; }
+    .conf-LOW    { background: #4a1515; color: #fc8181; border: 1px solid #742a2a; }
+
+    .answer-box {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-left: 3px solid #667eea;
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+    }
+
+    .citations-box {
+      background: #0d1117;
+      border: 1px solid #2d3748;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.8rem;
+      color: #a0aec0;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    /* Retrieval trace */
+    .trace-toggle {
+      background: none;
+      border: 1px solid #2d3748;
+      color: #718096;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      text-align: left;
+    }
+    .trace-toggle:hover { background: #2d3748; color: #e2e8f0; }
+
+    .trace-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .trace-item {
+      background: #0d1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.78rem;
+    }
+    .trace-item .ti-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .ti-rank {
+      background: #2d3748;
+      color: #a0aec0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+    }
+    .ti-source { color: #90cdf4; font-weight: 600; }
+    .ti-score  {
+      margin-left: auto;
+      background: #1a365d;
+      color: #90cdf4;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+    }
+    .ti-preview {
+      color: #718096;
+      line-height: 1.5;
+      font-family: monospace;
+      font-size: 0.74rem;
+    }
+
+    /* RBAC denied banner */
+    .denied-banner {
+      background: #2d1515;
+      border: 1px solid #742a2a;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: #feb2b2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #4a5568;
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🔐</div>
+  <div>
+    <h1>Enterprise RAG Intelligence System</h1>
+    <p>Secure multi-source retrieval with RBAC enforcement &amp; explainability</p>
+  </div>
+  <div class="header-badge">GPT-4o-mini · ChromaDB · SQLite</div>
+</header>
+
+<div class="container">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="card">
+      <div class="card-title">Select User</div>
+      <select class="user-select" id="userSelect" onchange="onUserChange()">
+        <option value="alice">Alice Smith — Admin</option>
+        <option value="bob">Bob Johnson — HR Manager</option>
+        <option value="carol">Carol Williams — Finance Analyst</option>
+        <option value="dave">Dave Brown — Engineer</option>
+        <option value="eve">Eve Davis — Compliance Officer</option>
+        <option value="frank">Frank Miller — Employee</option>
+      </select>
+      <div class="user-info" id="userInfo"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Permissions</div>
+      <div class="perm-list" id="permList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Try a Sample Query</div>
+      <div class="samples" id="samples"></div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+    <div class="card query-box">
+      <div class="card-title">Ask the Enterprise Assistant</div>
+      <textarea id="queryInput" placeholder="Ask anything… e.g. What is the parental leave policy? What was Q4 2024 revenue?"></textarea>
+      <div class="query-footer">
+        <button class="btn-submit" id="submitBtn" onclick="submitQuery()">Submit Query</button>
+        <span id="statusText" style="font-size:0.78rem;color:#718096;"></span>
+      </div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <span>Retrieving from enterprise data sources…</span>
+    </div>
+
+    <div id="result" class="result card">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">🔍</div>
+        <p>Submit a query to see grounded answers with citations</p>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+const USERS = {
+  alice: { name:"Alice Smith",    role:"admin",               dept:"IT",          perms:["hr_docs","financial_docs","security_docs","technical_docs","compliance_docs","incident_reports","public","employee_db","financial_db","project_db","audit_logs","system_alerts","access_logs"] },
+  bob:   { name:"Bob Johnson",    role:"hr_manager",          dept:"HR",          perms:["hr_docs","employee_db","project_db","public"] },
+  carol: { name:"Carol Williams", role:"finance_analyst",     dept:"Finance",     perms:["financial_docs","financial_db","project_db","public"] },
+  dave:  { name:"Dave Brown",     role:"engineer",            dept:"Engineering", perms:["technical_docs","project_db","system_alerts","public"] },
+  eve:   { name:"Eve Davis",      role:"compliance_officer",  dept:"Legal",       perms:["compliance_docs","security_docs","audit_logs","access_logs","incident_reports","public"] },
+  frank: { name:"Frank Miller",   role:"employee",            dept:"Sales",       perms:["hr_docs","project_db","public"] },
+};
+
+const SAMPLES = {
+  alice: ["Show recent security alerts","What are all department budgets?","Show failed login attempts"],
+  bob:   ["How many employees per department?","What is the parental leave policy?","List all employees in Engineering"],
+  carol: ["What was Q4 2024 net income?","Show 2025 department budgets","What are the top expense categories?"],
+  dave:  ["What microservices does ACME use?","Explain the CI/CD pipeline","Show recent system alerts"],
+  eve:   ["What happened in the September 2024 incident?","What are GDPR data retention policies?","Show audit logs for access denied events"],
+  frank: ["What is the vacation policy?","How many PTO days do I get?","What health benefits does ACME offer?"],
+};
+
+function onUserChange() {
+  const uid = document.getElementById('userSelect').value;
+  const u = USERS[uid];
+
+  document.getElementById('userInfo').innerHTML = `
+    <div class="name">${u.name}</div>
+    <div class="dept">${u.dept}</div>
+    <span class="role-badge role-${u.role}">${u.role.replace('_',' ')}</span>
+  `;
+
+  document.getElementById('permList').innerHTML =
+    u.perms.map(p => `<span class="perm-tag">${p}</span>`).join('');
+
+  document.getElementById('samples').innerHTML =
+    SAMPLES[uid].map(s => `<button class="sample-btn" onclick="useSample('${s.replace(/'/g,"\\'")}')">↗ ${s}</button>`).join('');
+
+  clearResult();
+}
+
+function useSample(q) {
+  document.getElementById('queryInput').value = q;
+}
+
+function clearResult() {
+  const r = document.getElementById('result');
+  r.style.display = 'flex';
+  r.innerHTML = `<div class="empty-state" id="emptyState"><div class="icon">🔍</div><p>Submit a query to see grounded answers with citations</p></div>`;
+}
+
+async function submitQuery() {
+  const uid   = document.getElementById('userSelect').value;
+  const query = document.getElementById('queryInput').value.trim();
+  if (!query) return;
+
+  const btn     = document.getElementById('submitBtn');
+  const loading = document.getElementById('loading');
+  const result  = document.getElementById('result');
+
+  btn.disabled = true;
+  loading.style.display = 'flex';
+  result.style.display  = 'none';
+
+  try {
+    const resp = await fetch('/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: uid, query, max_results: 5 }),
+    });
+    const data = await resp.json();
+    renderResult(data);
+  } catch(e) {
+    result.style.display = 'flex';
+    result.innerHTML = `<div style="color:#fc8181;font-size:0.85rem;">Error: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+
+function renderResult(d) {
+  const result = document.getElementById('result');
+  result.style.display = 'flex';
+
+  const confLevel = d.confidence.split('—')[0].trim().split(' ')[0];
+  const sourcePills = d.sources_queried.map(s =>
+    `<span class="pill pill-source">${s}</span>`).join('');
+  const deniedPills = d.denied_categories.map(s =>
+    `<span class="pill pill-denied">🚫 ${s}</span>`).join('');
+
+  const traceHTML = d.retrieval_trace.map((t,i) => `
+    <div class="trace-item">
+      <div class="ti-header">
+        <div class="ti-rank">${t.rank}</div>
+        <span class="ti-source">${t.source_category} › ${t.source.replace('SQL: ','').substring(0,40)}${t.source.length>40?'…':''}</span>
+        <span class="ti-score">score ${t.relevance_score.toFixed(3)}</span>
+      </div>
+      <div class="ti-preview">${escHtml(t.content_preview)}</div>
+    </div>`).join('');
+
+  const deniedBanner = d.denied_categories.length ? `
+    <div class="denied-banner">
+      🔒 <strong>RBAC:</strong> Access denied to — ${d.denied_categories.join(', ')}. Your role (${USERS[d.user.user_id].role}) does not have permission for these sources.
+    </div>` : '';
+
+  result.innerHTML = `
+    <div class="result-header">
+      <div class="meta-pills">
+        ${d.intents.map(i=>`<span class="pill pill-intent">${i}</span>`).join('')}
+        ${sourcePills}
+        ${deniedPills}
+        <span class="pill pill-chunks">${d.chunks_used} chunks</span>
+        <span class="pill pill-latency">${d.latency_ms}ms</span>
+      </div>
+      <span class="conf-badge conf-${confLevel}">${confLevel} confidence</span>
+    </div>
+
+    ${deniedBanner}
+
+    <div>
+      <div class="card-title" style="margin-bottom:8px;">Answer</div>
+      <div class="answer-box">${escHtml(d.answer)}</div>
+    </div>
+
+    ${d.citations ? `
+    <div>
+      <div class="card-title" style="margin-bottom:8px;">Citations</div>
+      <div class="citations-box">${escHtml(d.citations)}</div>
+    </div>` : ''}
+
+    ${d.retrieval_trace.length ? `
+    <div>
+      <button class="trace-toggle" onclick="toggleTrace(this)">▶ Retrieval Trace (${d.retrieval_trace.length} chunks retrieved)</button>
+      <div class="trace-list" style="display:none;">${traceHTML}</div>
+    </div>` : ''}
+  `;
+}
+
+function toggleTrace(btn) {
+  const list = btn.nextElementSibling;
+  const open = list.style.display !== 'none';
+  list.style.display = open ? 'none' : 'flex';
+  btn.textContent = (open ? '▶' : '▼') + btn.textContent.slice(1);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Init
+onUserChange();
+
+// Submit on Ctrl+Enter
+document.getElementById('queryInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitQuery();
+});
+</script>
+</body>
+</html>

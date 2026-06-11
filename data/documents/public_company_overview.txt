@@ -1,0 +1,26 @@
+
+ACME CORP — COMPANY OVERVIEW
+
+Founded: 2011
+Headquarters: San Francisco, CA
+Employees: ~580 (as of 2024)
+CEO: Jonathan Reid
+CTO: Sarah Chen
+CFO: Michael Torres
+
+MISSION
+Empowering enterprises with intelligent, secure software solutions.
+
+PRODUCTS
+- AcmePlatform: Core SaaS platform for enterprise data management
+- AcmeInsight: Analytics and business intelligence suite
+- AcmeGuard: Enterprise security and compliance tooling
+
+OFFICE LOCATIONS
+San Francisco (HQ), New York, London, Singapore, Sydney
+
+CONTACT
+General:      info@acmecorp.com
+Press:        press@acmecorp.com
+Support:      support@acmecorp.com
+HR/Careers:   careers@acmecorp.com

@@ -1,0 +1,48 @@
+
+ACME CORP — SECURITY INCIDENT REPORT #IR-2024-047
+Classification: CONFIDENTIAL — RESTRICTED ACCESS
+
+INCIDENT OVERVIEW
+Date Detected:    2024-09-15 02:34 UTC
+Date Contained:   2024-09-15 05:17 UTC
+Severity:         Sev2 (High)
+Type:             Unauthorised Access Attempt
+Status:           Resolved
+
+SUMMARY
+A credential stuffing attack targeted the customer portal login endpoint.
+Attackers used 14,200 credential pairs obtained from a third-party breach.
+231 accounts were successfully authenticated before detection.
+No data exfiltration confirmed. All affected sessions terminated within 43 minutes.
+
+TIMELINE
+02:34 — Anomalous login spike detected by Elasticsearch alert rule.
+02:41 — On-call engineer acknowledged PagerDuty alert.
+02:55 — CISO, CTO notified. War-room opened in Slack.
+03:12 — Automated rate limiting deployed; attack traffic reduced 90%.
+03:28 — Affected accounts force-logged-out and passwords invalidated.
+05:17 — Full containment confirmed. Attack traffic ceased.
+09:00 — Post-incident review (PIR) session commenced.
+
+ROOT CAUSE
+No MFA enforced on legacy customer portal (/portal/v1/login).
+CAPTCHA bypassed using CAPTCHA-solving service.
+Rate limiting on login endpoint was 500 req/min (too permissive).
+
+REMEDIATION ACTIONS
+[DONE] Deployed CAPTCHA v3 with risk score threshold of 0.7.
+[DONE] Enforced MFA on all portal login paths.
+[DONE] Reduced rate limit to 30 req/min per IP.
+[IN PROGRESS] Force password reset for all 231 affected accounts.
+[PLANNED] Upgrade to /portal/v2 by 2024-11-01 (legacy endpoint decommission).
+
+IMPACT ASSESSMENT
+Customer accounts compromised: 231 (of 84,500 active)
+Data accessed: Profile pages only (no payment data, no PII beyond email/username)
+Regulatory notification required: Yes — ICO notified 2024-09-17.
+Customer notifications sent: 2024-09-16 (affected users only).
+
+LESSONS LEARNED
+1. Legacy endpoints must be included in hardening roadmap.
+2. MFA enforcement must be retroactive, not just new accounts.
+3. Credential stuffing detection rules needed in WAF.

@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+data/vector_store/
+data/database/auth.db
+.DS_Store
+*.db-journal

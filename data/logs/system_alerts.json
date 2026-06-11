@@ -1,0 +1,202 @@
+[
+  {
+    "alert_id": "ALERT-0001",
+    "timestamp": "2024-10-05T08:56:00Z",
+    "severity": "MEDIUM",
+    "category": "configuration",
+    "message": "Vulnerability scan completed: 3 HIGH severity findings",
+    "source": "WAF",
+    "resolved": true,
+    "assigned_to": "IT Ops"
+  },
+  {
+    "alert_id": "ALERT-0002",
+    "timestamp": "2024-11-25T19:47:00Z",
+    "severity": "HIGH",
+    "category": "configuration",
+    "message": "SSL certificate expiring in 7 days for api.acmecorp.com",
+    "source": "SIEM",
+    "resolved": true,
+    "assigned_to": "Security Team"
+  },
+  {
+    "alert_id": "ALERT-0003",
+    "timestamp": "2024-09-03T14:27:00Z",
+    "severity": "MEDIUM",
+    "category": "configuration",
+    "message": "New admin account created: frank",
+    "source": "WAF",
+    "resolved": false,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0004",
+    "timestamp": "2024-11-08T06:04:00Z",
+    "severity": "LOW",
+    "category": "configuration",
+    "message": "Privileged account dave logged in outside business hours",
+    "source": "DLP",
+    "resolved": false,
+    "assigned_to": "IT Ops"
+  },
+  {
+    "alert_id": "ALERT-0005",
+    "timestamp": "2024-10-14T00:03:00Z",
+    "severity": "CRITICAL",
+    "category": "authentication",
+    "message": "Unusual data export volume from frank account",
+    "source": "WAF",
+    "resolved": true,
+    "assigned_to": "Security Team"
+  },
+  {
+    "alert_id": "ALERT-0006",
+    "timestamp": "2024-10-25T00:07:00Z",
+    "severity": "CRITICAL",
+    "category": "configuration",
+    "message": "Vulnerability scan completed: 3 HIGH severity findings",
+    "source": "WAF",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0007",
+    "timestamp": "2024-11-21T09:11:00Z",
+    "severity": "LOW",
+    "category": "data_access",
+    "message": "Multiple failed login attempts detected for user dave",
+    "source": "IDS",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0008",
+    "timestamp": "2024-10-24T13:24:00Z",
+    "severity": "LOW",
+    "category": "authentication",
+    "message": "Privileged account bob logged in outside business hours",
+    "source": "SIEM",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0009",
+    "timestamp": "2024-10-09T23:07:00Z",
+    "severity": "MEDIUM",
+    "category": "authentication",
+    "message": "Access attempt to restricted resource from unknown IP",
+    "source": "SIEM",
+    "resolved": true,
+    "assigned_to": "IT Ops"
+  },
+  {
+    "alert_id": "ALERT-0010",
+    "timestamp": "2024-10-21T15:13:00Z",
+    "severity": "LOW",
+    "category": "configuration",
+    "message": "Privileged account eve logged in outside business hours",
+    "source": "DLP",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0011",
+    "timestamp": "2024-10-03T04:12:00Z",
+    "severity": "LOW",
+    "category": "configuration",
+    "message": "New admin account created: carol",
+    "source": "WAF",
+    "resolved": false,
+    "assigned_to": "Security Team"
+  },
+  {
+    "alert_id": "ALERT-0012",
+    "timestamp": "2024-11-18T02:14:00Z",
+    "severity": "MEDIUM",
+    "category": "vulnerability",
+    "message": "Vulnerability scan completed: 3 HIGH severity findings",
+    "source": "WAF",
+    "resolved": false,
+    "assigned_to": "Security Team"
+  },
+  {
+    "alert_id": "ALERT-0013",
+    "timestamp": "2024-10-14T00:27:00Z",
+    "severity": "HIGH",
+    "category": "authentication",
+    "message": "Vulnerability scan completed: 3 HIGH severity findings",
+    "source": "DLP",
+    "resolved": true,
+    "assigned_to": "Security Team"
+  },
+  {
+    "alert_id": "ALERT-0014",
+    "timestamp": "2024-09-11T07:19:00Z",
+    "severity": "LOW",
+    "category": "data_access",
+    "message": "Credential stuffing attack detected on /portal/v1/login",
+    "source": "SIEM",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0015",
+    "timestamp": "2024-10-04T21:41:00Z",
+    "severity": "MEDIUM",
+    "category": "data_access",
+    "message": "Access attempt to restricted resource from unknown IP",
+    "source": "SIEM",
+    "resolved": false,
+    "assigned_to": "Security Team"
+  },
+  {
+    "alert_id": "ALERT-0016",
+    "timestamp": "2024-10-12T12:21:00Z",
+    "severity": "LOW",
+    "category": "authentication",
+    "message": "Credential stuffing attack detected on /portal/v1/login",
+    "source": "DLP",
+    "resolved": false,
+    "assigned_to": "IT Ops"
+  },
+  {
+    "alert_id": "ALERT-0017",
+    "timestamp": "2024-11-01T06:22:00Z",
+    "severity": "CRITICAL",
+    "category": "data_access",
+    "message": "Vulnerability scan completed: 3 HIGH severity findings",
+    "source": "SIEM",
+    "resolved": false,
+    "assigned_to": "IT Ops"
+  },
+  {
+    "alert_id": "ALERT-0018",
+    "timestamp": "2024-11-29T20:33:00Z",
+    "severity": "CRITICAL",
+    "category": "vulnerability",
+    "message": "Credential stuffing attack detected on /portal/v1/login",
+    "source": "DLP",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0019",
+    "timestamp": "2024-10-15T16:54:00Z",
+    "severity": "CRITICAL",
+    "category": "configuration",
+    "message": "Access attempt to restricted resource from unknown IP",
+    "source": "SIEM",
+    "resolved": true,
+    "assigned_to": "Compliance"
+  },
+  {
+    "alert_id": "ALERT-0020",
+    "timestamp": "2024-11-15T13:02:00Z",
+    "severity": "MEDIUM",
+    "category": "authentication",
+    "message": "Access attempt to restricted resource from unknown IP",
+    "source": "IDS",
+    "resolved": false,
+    "assigned_to": "Compliance"
+  }
+]

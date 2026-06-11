@@ -1,0 +1,37 @@
+
+ACME CORP INFORMATION SECURITY POLICY — v2.1 (2024)
+
+1. DATA CLASSIFICATION
+Level 1 – Public: General corporate information, press releases.
+Level 2 – Internal: Standard business operations, non-sensitive.
+Level 3 – Confidential: Customer data, financials, HR records.
+Level 4 – Restricted: Trade secrets, merger plans, legal communications.
+
+2. ACCESS CONTROL
+Principle of least privilege applies to all system access.
+All privileged accounts require MFA. Service accounts must not be shared.
+Access reviews are conducted quarterly. Dormant accounts deactivated after 90 days.
+Separation of duties required for financial systems above $10,000 approval.
+
+3. PASSWORD POLICY
+Minimum length: 14 characters. Must include upper, lower, digit, special char.
+Password rotation: every 90 days for privileged accounts, 180 days for standard.
+Password reuse: last 12 passwords may not be reused.
+Account lockout: 5 failed attempts → 30-minute lockout.
+
+4. INCIDENT RESPONSE
+Severity 1 (Critical): Response within 1 hour. CISO, CTO, CEO notified.
+Severity 2 (High): Response within 4 hours. CISO and department head notified.
+Severity 3 (Medium): Response within 24 hours. Security team notified.
+Severity 4 (Low): Response within 72 hours. Logged and tracked.
+All incidents must be logged in the SIEM and reported to compliance within 72h.
+
+5. ENCRYPTION STANDARDS
+Data at rest: AES-256. Data in transit: TLS 1.3 minimum.
+Cryptographic keys managed via enterprise HSM. Key rotation: annually.
+End-to-end encryption required for all Restricted data.
+
+6. THIRD-PARTY VENDOR SECURITY
+All vendors handling Level 3+ data must complete annual security assessments.
+SOC 2 Type II report required before onboarding.
+Right-to-audit clause mandatory in all vendor contracts.

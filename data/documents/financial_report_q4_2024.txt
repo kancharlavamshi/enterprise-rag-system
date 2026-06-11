@@ -1,0 +1,46 @@
+
+ACME CORP — Q4 2024 FINANCIAL REPORT (CONFIDENTIAL)
+
+EXECUTIVE SUMMARY
+ACME Corp delivered strong Q4 2024 results, exceeding guidance on revenue and EPS.
+
+INCOME STATEMENT (Q4 2024)
+Total Revenue:          $45,200,000
+Cost of Goods Sold:     $18,080,000
+Gross Profit:           $27,120,000   (Gross Margin: 60.0%)
+Operating Expenses:
+  Sales & Marketing:     $6,780,000
+  Research & Development: $4,520,000
+  General & Administrative: $3,614,000
+  Total OpEx:            $14,914,000
+EBITDA:                 $12,206,000
+Net Income:             $9,044,000    (Net Margin: 20.1%)
+
+FULL YEAR 2024
+Revenue:                $162,400,000  (+18% YoY)
+Net Income:             $32,480,000   (+24% YoY)
+
+DEPARTMENT BUDGETS 2025
+Engineering:            $28,000,000
+Sales & Marketing:      $22,000,000
+Human Resources:         $5,500,000
+Finance:                 $4,200,000
+Legal & Compliance:      $3,800,000
+Operations:              $9,500,000
+
+CASH & LIQUIDITY
+Cash and equivalents:   $87,600,000
+Total debt:             $12,000,000
+Net cash position:      $75,600,000
+
+TOP 5 REVENUE STREAMS (Q4 2024)
+1. SaaS subscriptions:  $24,860,000 (55%)
+2. Professional services: $8,136,000 (18%)
+3. Licensing:            $5,424,000 (12%)
+4. Maintenance & support: $4,520,000 (10%)
+5. Other:                $2,260,000  (5%)
+
+OUTLOOK 2025
+Revenue guidance:       $195,000,000 – $200,000,000
+EBITDA margin target:   28% – 30%
+Headcount growth:       +12% (targeting 650 FTE by year-end)

@@ -1,0 +1,44 @@
+
+ACME CORP — GDPR COMPLIANCE FRAMEWORK (2024)
+
+DATA PROTECTION OFFICER (DPO)
+Name: Margaret Thompson
+Email: dpo@acmecorp.com
+Phone: +1-415-555-0199
+
+DATA SUBJECT RIGHTS
+Right of Access (Art. 15): Fulfilled within 30 days of request.
+Right to Erasure (Art. 17): Fulfilled within 30 days. Exceptions logged.
+Right to Portability (Art. 20): Data provided in JSON/CSV format.
+Right to Rectification (Art. 16): Corrections within 10 business days.
+Right to Object (Art. 21): Opt-out processed immediately.
+
+LAWFUL BASIS FOR PROCESSING
+Customer data: Contractual necessity + Consent
+Employee data: Legal obligation + Legitimate interests
+Analytics: Legitimate interests (with opt-out mechanism)
+Marketing: Explicit consent required
+
+DATA RETENTION POLICY
+Customer account data: Retained 7 years post-account closure.
+Transaction records: Retained 10 years (tax/legal compliance).
+Application logs: Retained 90 days.
+Audit logs: Retained 3 years.
+Marketing data: Retained until consent withdrawn.
+
+BREACH NOTIFICATION PROCEDURE
+Internal detection to DPO notification: within 1 hour.
+DPO assessment and risk scoring: within 4 hours.
+If high risk, notify supervisory authority (ICO) within 72 hours.
+Notify affected data subjects within 72 hours if high risk to individuals.
+All breaches documented in the breach register regardless of notification outcome.
+
+INTERNATIONAL DATA TRANSFERS
+EU-US Data Privacy Framework certification maintained.
+Standard Contractual Clauses (SCCs) used for non-Framework transfers.
+Transfer Impact Assessments (TIAs) conducted for high-risk transfers.
+
+PRIVACY BY DESIGN
+DPIAs mandatory for new processing activities involving sensitive data.
+Data minimisation enforced in all new product features.
+Pseudonymisation applied to analytics datasets.
