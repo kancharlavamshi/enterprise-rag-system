@@ -248,3 +248,4 @@ enterprise-rag-system/
 - [ ] Multi-tenancy — isolate data per organisation
 - [ ] Chat history — multi-turn conversation memory
 - [ ] Export answers as PDF report with citations
+
