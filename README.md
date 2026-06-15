@@ -2,12 +2,7 @@
 
 > A production-grade, secure Retrieval-Augmented Generation system over heterogeneous enterprise data silos — strict RBAC, multi-source retrieval, grounded citations, and full explainability.
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green?logo=fastapi)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?logo=openai)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange)
-![SQLite](https://img.shields.io/badge/SQLite-Structured%20Data-blue?logo=sqlite)
-
+![overview](https://github.com/kancharlavamshi/enterprise-rag-system/blob/main/enterprise-rag-system.png)
 ---
 
 ## Versions
