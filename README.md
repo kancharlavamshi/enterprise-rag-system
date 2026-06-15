@@ -9,8 +9,8 @@
 | Version | Repo | Status | Features |
 |---------|------|--------|---------|
 | **v1 — Demo** | Public (this repo) | ✅ Live | RAG pipeline, RBAC, multi-source retrieval, citations, explainability |
-| **v2 — Production Auth** | Private | ✅ Built | + Login, registration, admin email approval, session management |
-| **v3 — Security Hardening** | Private | ✅ Built | + Rate limiting, session expiry, input sanitization, CORS, security headers |
+| **v2 — Production Auth** | Private branch | ✅ Built | + Login, registration, admin email approval, session management |
+| **v3 — Security Hardening** | Private branch | ✅ Built | + Rate limiting, session expiry, input sanitization, CORS, security headers |
 
 > 📩 **Want access to v2 or v3?** Open an issue or email `krishnedit3@gmail.com` with your use case.
 
