@@ -12,182 +12,174 @@
 
 ## Versions
 
-| Version | Visibility | Status | What it adds |
-|---------|-----------|--------|-------------|
-| **v1 — Demo** | Public (this repo) | Live | RAG pipeline, RBAC, multi-source retrieval, citations, explainability, 4-theme UI |
-| **v2 — Auth** | Private | Built | + Login, registration, admin email approval, session cookies |
-| **v3 — Security** | Private | Built | + Rate limiting, session expiry, input sanitization, CORS, security headers |
-| **v4 — RAG Quality** | Private | Built | + Cross-encoder re-ranking, conversation memory, RAGAS evaluation, async email |
+This project has been built iteratively across 4 versions. **v1 is open-source in this repo.** v2, v3, and v4 are in a private repository — see the access section below.
 
-> v1 is fully runnable from this repo. v2, v3, v4 are private branches.
-> Want access? Email `krishnedit3@gmail.com` with your use case.
+| Version | What it is |
+|---------|-----------|
+| **v1 — Demo** | Core RAG pipeline with RBAC, multi-source retrieval, citations, explainability. Fully runnable — instructions below. |
+| **v2 — Auth** | Adds real login system — user registration, admin email approval, password hashing, session cookies. |
+| **v3 — Security** | Adds rate limiting, session expiry, XSS sanitization, CORS policy, security headers on top of v2. |
+| **v4 — RAG Quality** | Adds cross-encoder re-ranking, conversation memory, semantic chunking, RAGAS evaluation on top of v3. |
 
 ---
 
-## Quick Start (v1)
+## Run v1 (Demo)
+
+### Prerequisites
+- Python 3.9 or higher
+- An OpenAI API key (get one at platform.openai.com)
+- ~300 MB disk space (ChromaDB + embedding models)
+
+### Step-by-step
 
 ```bash
-# 1. Clone
+# 1. Clone this repository
 git clone https://github.com/kancharlavamshi/enterprise-rag-system.git
 cd enterprise-rag-system
+```
 
+```bash
 # 2. Install dependencies
 pip install -r requirements.txt
+```
 
-# 3. Set your OpenAI API key
+```bash
+# 3. Configure your API key
 cp .env.example .env
-# Edit .env and set: OPENAI_API_KEY=your_key_here
+```
 
-# 4. Generate synthetic enterprise data + index vector store (one-time, ~30 seconds)
+Open `.env` and set your key:
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+```bash
+# 4. Generate synthetic enterprise data and index the vector store
+# This runs once and takes about 30 seconds
 python setup_data.py
+```
 
+```bash
 # 5. Start the server
 python -m uvicorn app_demo:app --reload --port 8000
+```
 
-# 6. Open in browser
+```bash
+# 6. Open the app in your browser
 open http://localhost:8000
 ```
 
-Requirements: Python 3.9+, OpenAI API key, ~300 MB disk (ChromaDB + sentence-transformer models)
+### Demo users
+The app comes with 6 pre-built demo users. Select any from the dropdown in the UI:
 
----
+| User | Role | Can access |
+|------|------|-----------|
+| Alice Smith | admin | Everything — all 12 data sources |
+| Bob Johnson | hr_manager | HR docs, employee database, projects |
+| Carol Williams | finance_analyst | Financial docs, financial database, projects |
+| Dave Brown | engineer | Technical docs, system alerts, projects |
+| Eve Davis | compliance_officer | Compliance, security, audit logs, access logs, incidents |
+| Frank Miller | employee | HR docs, projects, public info only |
 
-## What Each Version Adds
-
-### v2 — Authentication (private)
-Built on top of v1:
-- User registration with name, email, department, role selection
-- Admin approval via email (Approve / Reject one-click links)
-- Login with email + password (PBKDF2-SHA256, 100k iterations)
-- Session cookies (httponly, samesite=lax, 24-hour expiry)
-- Protected `/app` route — shows your real authenticated role, no demo dropdown
-- Run: `python -m uvicorn app:app --reload --port 8000`
-
-### v3 — Security Hardening (private)
-Built on top of v2:
-- Login rate limiting — max 5 attempts per IP, 5-minute lockout
-- Query rate limiting — max 30 queries/min per IP
-- Server-side session expiry — auto-logout after 24 hours
-- Input sanitization — XSS stripping on all user inputs before processing
-- CORS policy — allowed origins configurable via `.env`
-- Security headers — X-Frame-Options DENY, X-Content-Type-Options nosniff, X-XSS-Protection, Content-Security-Policy, Strict-Transport-Security
-- Run: `python -m uvicorn app_v3:app --reload --port 8000`
-
-### v4 — RAG Quality (private)
-Built on top of v3:
-- Cross-encoder re-ranking — all retrieved chunks scored by `cross-encoder/ms-marco-MiniLM-L-6-v2` and reordered before the LLM sees them
-- Semantic chunking — paragraph/sentence boundary splitting with 1-sentence overlap (replaces fixed word-count chunking)
-- Conversation memory — last 5 turns per session passed as context to the LLM, keyed by auth cookie
-- RAGAS evaluation — `POST /evaluate` endpoint scores any answer for faithfulness, answer relevancy, and context precision
-- Memory clear — `DELETE /memory/{session_id}` clears conversation history on demand
-- Async email — registration responds instantly; SMTP runs in a background thread, no 15-second delays
-- 4-theme UI across all pages — Dark / Light / Ocean / Mocha, persisted in localStorage
-- Run: `python -m uvicorn app_v4:app --reload --port 8000`
+### Try these queries
+- `What is the parental leave policy?` (as Bob — HR Manager)
+- `What was Q4 2024 net income?` (as Carol — Finance Analyst)
+- `Show recent security alerts` (as Alice — Admin)
+- `What microservices does ACME use?` (as Dave — Engineer)
+- `What happened in the September 2024 incident?` (as Eve — Compliance Officer)
+- `How many PTO days do I get?` (as Frank — Employee)
 
 ---
 
 ## Architecture
 
 ```
-User Query (Natural Language)
-         |
-         v
-+---------------------+
-|   FastAPI Backend   |  <-- Web UI (static/index.html)
-+--------+------------+
-         |
-+--------v--------+
-|   RBAC Auth     |  user_id -> role -> permitted source categories
-+--------+--------+
-         |
-+--------v--------+
-| Intent Detector |  GPT-4o-mini classifies query intent
-+--------+--------+
-         |
-+--------v--------+
-|  Query Router   |  intent x permissions -> allowed sources
-+---+----+----+---+
-    |    |    |
-+---v-++--v-++v------+
-|Chroma||SQL ||JSON  |
-| DB  ||lite ||Logs  |
-|Docs ||DB  ||Alerts|
-+---+-++--+--++--+---+
-    |     |      |
-+---v-----v------v------+
-| MultiSourceRetriever  |  dedup -> cross-encoder re-rank (v4)
-+--------+--------------+
-         |
-+--------v----------+
-| Answer Generator  |  conversation history (v4) + GPT-4o-mini
-+--------+----------+
-         |
-Response: answer + [SOURCE_N] citations + confidence
-        + retrieval_trace + denied_categories
+User Query
+    │
+    ▼
+┌───────────────────┐
+│  FastAPI Backend  │  ← Web UI (static/index.html)
+└────────┬──────────┘
+         │
+┌────────▼────────┐
+│   RBAC Auth     │  user_id → role → permitted sources
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│ Intent Detector │  GPT-4o-mini classifies the query intent
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Query Router   │  intent × permissions → allowed data sources
+└──┬──────┬────┬──┘
+   │      │    │
+┌──▼──┐ ┌─▼──┐ ┌▼──────┐
+│Chroma│ │SQL │ │JSON   │
+│ DB  │ │lite│ │Logs   │
+│Docs │ │ DB │ │Alerts │
+└──┬──┘ └─┬──┘ └┬──────┘
+   │       │     │
+┌──▼───────▼─────▼──────┐
+│  MultiSourceRetriever  │  dedup + rank retrieved chunks
+└────────────────────────┘
+         │
+┌────────▼──────────┐
+│  AnswerGenerator  │  GPT-4o-mini → grounded answer + citations
+└───────────────────┘
+         │
+    Response:
+    answer + [SOURCE_N] citations + confidence
+    + retrieval_trace + denied_categories
 ```
 
 ---
 
-## Features (v1)
+## What v1 Gives You
 
-- Multi-source Retrieval — semantic search (ChromaDB), NL-to-SQL (SQLite), JSON log search in one query
-- Strict RBAC — 6 roles x 12 data source categories, enforced at router level AND ChromaDB metadata pre-filter
-- Grounded Answers — every claim backed by retrieved context, never hallucinated
-- Inline Citations — [SOURCE_N] markers with source file and category
-- Explainability — full retrieval trace, relevance scores, confidence level, denied categories shown in UI
-- 4-Theme UI — Dark / Light / Ocean / Mocha, switch from the header
+- **Multi-source Retrieval** — one query searches ChromaDB (documents), SQLite (structured data), and JSON logs simultaneously
+- **Strict RBAC** — enforced at two layers: query router blocks denied sources AND ChromaDB metadata pre-filters vectors at retrieval time
+- **Grounded Answers** — GPT-4o-mini is instructed to use only retrieved context; every claim has a source
+- **Inline Citations** — `[SOURCE_1]`, `[SOURCE_2]` markers in the answer, with a source list at the bottom
+- **Retrieval Trace** — expandable panel in the UI shows every chunk retrieved, its source, category, and relevance score
+- **Confidence Level** — HIGH / MEDIUM / LOW with reasoning on every response
+- **4-Theme UI** — Dark, Light, Ocean, Mocha — switch from the header, persists across sessions
 
 ---
 
-## Dataset
+## Dataset (Synthetic)
 
-### Documents (data/documents/)
-| File | Category | Content |
+### Documents — `data/documents/`
+| File | Category | Contains |
 |------|----------|---------|
-| hr_policy.txt | hr_docs | PTO (15-25 days), sick leave, parental leave (16 weeks), remote work, 401k |
-| financial_report_q4_2024.txt | financial_docs | Revenue $45.2M, net income $9M, 2025 dept budgets |
-| security_policy.txt | security_docs | Password policy, data classification, incident response |
-| technical_architecture.txt | technical_docs | 47 microservices, CI/CD, AWS/K8s/Kafka stack |
-| compliance_gdpr.txt | compliance_docs | GDPR rights, retention policies, breach notification |
-| incident_report_sept2024.txt | incident_reports | Credential stuffing attack IR-2024-047 |
-| public_company_overview.txt | public | Company info, leadership, office locations |
+| `hr_policy.txt` | hr_docs | PTO 15–25 days, parental leave 16 weeks, sick leave, 401k, remote work |
+| `financial_report_q4_2024.txt` | financial_docs | Revenue $45.2M, net income $9M, department budgets 2025 |
+| `security_policy.txt` | security_docs | Password policy, data classification, incident response SLA |
+| `technical_architecture.txt` | technical_docs | 47 microservices, CI/CD, AWS + Kubernetes + Kafka |
+| `compliance_gdpr.txt` | compliance_docs | GDPR rights, retention schedules, breach notification |
+| `incident_report_sept2024.txt` | incident_reports | Credential stuffing attack IR-2024-047, timeline, remediation |
+| `public_company_overview.txt` | public | Company mission, leadership team, office locations |
 
-### SQL Database (data/database/enterprise.db)
-| Table | Rows | Content |
+### SQL — `data/database/enterprise.db`
+| Table | Rows | Contains |
 |-------|------|---------|
-| employees | 20 | Name, department, position, salary, hire date |
-| departments | 5 | Engineering, HR, Finance, Sales, Legal |
-| projects | 10 | Budget, spent, status, timeline |
-| financial_transactions | 100 | Date, category, amount, approver |
-| budget_allocations | 5 | Annual dept budgets vs actual spend |
+| `employees` | 20 | Name, department, position, salary, hire date |
+| `departments` | 5 | Name, head, headcount, location |
+| `projects` | 10 | Name, budget, spent, status, timeline |
+| `financial_transactions` | 100 | Date, category, amount, approver |
+| `budget_allocations` | 5 | Annual budget vs actual per department |
 
-### JSON Logs (data/logs/)
-| File | Entries | Content |
+### JSON Logs — `data/logs/`
+| File | Entries | Contains |
 |------|---------|---------|
-| audit_log.json | 50 | User actions, resource access, session IDs |
-| system_alerts.json | 20 | SIEM/WAF/IDS alerts with severity (LOW to CRITICAL) |
-| access_log.json | 100 | Login success/failure, IP, MFA, geo |
+| `audit_log.json` | 50 | User actions, resources accessed, session IDs, timestamps |
+| `system_alerts.json` | 20 | SIEM/WAF/IDS alerts with severity LOW → CRITICAL |
+| `access_log.json` | 100 | Login success/failure, IP, MFA status, geo location |
 
 ---
 
-## RBAC Design
+## API
 
-| Role | Accessible Sources |
-|------|--------------------|
-| admin | All 12 sources |
-| hr_manager | hr_docs, employee_db, project_db, public |
-| finance_analyst | financial_docs, financial_db, project_db, public |
-| engineer | technical_docs, project_db, system_alerts, public |
-| compliance_officer | compliance_docs, security_docs, audit_logs, access_logs, incident_reports, public |
-| employee | hr_docs, project_db, public |
-
-Demo users (v1): alice (admin), bob (hr_manager), carol (finance_analyst), dave (engineer), eve (compliance_officer), frank (employee)
-
----
-
-## API Reference
-
-### POST /query
+### `POST /query`
 ```json
 {
   "user_id": "carol",
@@ -199,25 +191,25 @@ Demo users (v1): alice (admin), bob (hr_manager), carol (finance_analyst), dave 
 Response:
 ```json
 {
-  "user": { "user_id": "carol", "role": "finance_analyst" },
+  "user": { "user_id": "carol", "role": "finance_analyst", "department": "Finance" },
   "intents": ["FINANCIAL"],
   "intent_confidence": 0.95,
   "sources_queried": ["financial_docs", "financial_db"],
   "denied_categories": [],
   "answer": "ACME's net income in Q4 2024 was $9,044,000 [SOURCE_2].",
-  "confidence": "HIGH -- directly stated in context",
-  "citations": "[SOURCE_1] financial_db | SQL\n[SOURCE_2] financial_docs | financial_report_q4_2024.txt",
+  "confidence": "HIGH — directly stated in retrieved context",
+  "citations": "[SOURCE_1] financial_db | SQL: financial_transactions\n[SOURCE_2] financial_docs | financial_report_q4_2024.txt",
   "retrieval_trace": [
-    { "rank": 1, "source_category": "financial_db", "relevance_score": 0.91 }
+    { "rank": 1, "source_category": "financial_db", "source": "SQL: budget_allocations", "relevance_score": 0.91, "content_preview": "..." }
   ],
-  "chunks_used": 2,
+  "chunks_used": 4,
   "latency_ms": 1842.3
 }
 ```
 
-### GET /users — list all users and their permissions
-### GET /health — health check
-### GET /docs — Swagger UI (auto-generated)
+### `GET /users` — list all demo users and their permissions
+### `GET /health` — service health check
+### `GET /docs` — interactive Swagger UI
 
 ---
 
@@ -225,55 +217,81 @@ Response:
 
 ```
 enterprise-rag-system/
-├── app_demo.py          # v1 — FastAPI demo app (no auth required)
-├── config.py            # RBAC roles, users, model config
-├── setup_data.py        # Generates synthetic data + indexes ChromaDB
+├── app_demo.py          # FastAPI application — v1 demo (no auth)
+├── config.py            # RBAC role definitions, demo users, model settings
+├── setup_data.py        # Generates all synthetic data + indexes ChromaDB
+├── demo.py              # CLI version (rich terminal output, no server needed)
 ├── requirements.txt
 ├── .env.example
+│
 ├── core/
-│   ├── auth.py          # RBAC authenticator
+│   ├── auth.py          # RBAC authenticator — validates user_id → role → permissions
 │   ├── intent.py        # Intent detection via GPT-4o-mini
-│   ├── router.py        # Routes query to allowed sources by role
-│   ├── retriever.py     # Orchestrates multi-source retrieval
-│   └── generator.py     # Builds prompt + calls GPT-4o-mini
+│   ├── router.py        # Maps intent × permissions to allowed data sources
+│   ├── retriever.py     # Orchestrates multi-source retrieval + deduplication
+│   └── generator.py     # Builds prompt with context + calls GPT-4o-mini
+│
 ├── sources/
 │   ├── base.py          # RetrievedChunk dataclass
-│   ├── pdf_source.py    # ChromaDB vector search
-│   ├── sql_source.py    # NL to SQL on SQLite
-│   └── json_source.py   # JSON log search
+│   ├── pdf_source.py    # ChromaDB vector search (semantic similarity)
+│   ├── sql_source.py    # NL → SQL on SQLite (structured queries)
+│   └── json_source.py   # JSON log search (recent alerts, audit events)
+│
 ├── static/
-│   └── index.html       # Web UI with 4-theme switcher
+│   └── index.html       # Web UI — user selector, query input, result display, themes
+│
 └── data/
     ├── documents/        # 7 synthetic enterprise text files
-    ├── database/         # SQLite (enterprise.db)
-    └── logs/             # 3 JSON log files
+    ├── database/         # enterprise.db (SQLite)
+    └── logs/             # audit_log.json, system_alerts.json, access_log.json
 ```
 
 ---
 
-## Security
+## v2, v3, v4 — Private Repository
 
-### v1 (this repo)
-| Feature | How |
-|---|---|
-| RBAC — two layers | Router blocks denied sources + ChromaDB metadata pre-filter |
-| SQL injection prevention | GPT-4o-mini generates SELECT-only queries; no raw user SQL |
-| Secrets management | All keys via .env, never hardcoded |
+The advanced versions are maintained in a private repository. Here is what each adds:
 
-### v2 (private)
-- PBKDF2-SHA256 password hashing (100k iterations)
-- Admin email approval before any account is activated
-- Session tokens stored server-side in SQLite, never exposed to client
+### v2 — Production Authentication
+- User registration form (name, email, department, role)
+- Admin email approval workflow — admin receives an email with one-click Approve / Reject
+- No account is activated until an admin approves it
+- Login with email + password (PBKDF2-SHA256, 100,000 iterations)
+- Session cookies (`httponly`, `samesite=lax`, 24-hour expiry)
+- Authenticated app UI — shows your real approved role, no demo dropdown
+- Built with: `auth_db.py` (SQLite sessions), `core/email_service.py` (Gmail SMTP)
 
-### v3 (private)
-- Login rate limiting — 5 attempts per IP, 5-minute lockout
-- Query rate limiting — 30 queries/min per IP
-- Server-side session expiry — 24-hour auto-logout
-- Input sanitization — XSS stripping on all inputs
-- CORS + security headers (X-Frame-Options, CSP, HSTS)
+### v3 — Security Hardening
+- Login rate limiting — 5 failed attempts per IP triggers a 5-minute lockout
+- Query rate limiting — max 30 queries per minute per IP
+- Server-side session expiry — sessions auto-expire after 24 hours regardless of cookie
+- Input sanitization — XSS stripping applied to every user input before processing
+- CORS policy — allowed origins locked down via environment variable
+- Security headers on every response:
+  - `X-Frame-Options: DENY` (clickjacking protection)
+  - `X-Content-Type-Options: nosniff`
+  - `X-XSS-Protection: 1; mode=block`
+  - `Content-Security-Policy`
+  - `Strict-Transport-Security` (HSTS)
 
-### v4 (private)
-- All of v3, plus registration is always instant (email async, no blocking)
+### v4 — RAG Quality
+- **Cross-encoder re-ranking** — retrieved chunks are re-scored by `cross-encoder/ms-marco-MiniLM-L-6-v2` and reordered so the most relevant reach the LLM first
+- **Semantic chunking** — documents split at paragraph/sentence boundaries with 1-sentence overlap, preserving meaning better than fixed word-count chunks
+- **Conversation memory** — last 5 conversation turns stored per session and passed to the LLM as context, enabling follow-up questions
+- **RAGAS evaluation** — `POST /evaluate` endpoint scores any answer on faithfulness, answer relevancy, and context precision
+- **Async email** — registration always responds in under 1 second; SMTP runs in a background thread
+- **4-theme UI** — Dark / Light / Ocean / Mocha across all pages, persisted in localStorage
+
+---
+
+## Request Access to v2 / v3 / v4
+
+The private repository is available on request for:
+- Developers building production RAG systems
+- Security engineers evaluating the auth + hardening stack
+- Researchers working on RAG quality and evaluation
+
+**Email `krishnedit3@gmail.com`** with your name, use case, and which version you need.
 
 ---
 
@@ -281,6 +299,6 @@ enterprise-rag-system/
 
 - [ ] HTTPS / SSL with Let's Encrypt for cloud deployment
 - [ ] Real PDF uploads (PyPDF2 / pdfplumber)
-- [ ] Vector store refresh API — re-index without restart
+- [ ] Vector store refresh API — re-index without server restart
 - [ ] Multi-tenancy — isolate data per organisation
 - [ ] Export answers as PDF report with citations
