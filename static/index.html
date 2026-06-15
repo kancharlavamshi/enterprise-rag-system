@@ -1,49 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Enterprise RAG Intelligence System</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
-      min-height: 100vh;
+    /* ── Theme tokens ─────────────────────────────────────────────────────── */
+    :root {
+      --bg:          #0f1117;
+      --surface:     #1a1f2e;
+      --surface2:    #0d1117;
+      --border:      #2d3748;
+      --border2:     #4a5568;
+      --text:        #e2e8f0;
+      --text-muted:  #718096;
+      --text-dim:    #4a5568;
+      --text-head:   #f7fafc;
+      --accent:      #667eea;
+      --header-bg:   linear-gradient(135deg,#1a1f2e 0%,#16213e 100%);
+      --header-bd:   #2d3748;
+      --badge-bg:    #1a365d;
+      --badge-bd:    #2b6cb0;
+      --badge-color: #90cdf4;
+    }
+    [data-theme="light"] {
+      --bg:          #f0f4f8;
+      --surface:     #ffffff;
+      --surface2:    #edf2f7;
+      --border:      #e2e8f0;
+      --border2:     #cbd5e0;
+      --text:        #1a202c;
+      --text-muted:  #4a5568;
+      --text-dim:    #a0aec0;
+      --text-head:   #1a202c;
+      --accent:      #5a67d8;
+      --header-bg:   linear-gradient(135deg,#ffffff 0%,#f7fafc 100%);
+      --header-bd:   #e2e8f0;
+      --badge-bg:    #ebf4ff;
+      --badge-bd:    #bee3f8;
+      --badge-color: #2b6cb0;
+    }
+    [data-theme="ocean"] {
+      --bg:          #070d1a;
+      --surface:     #0c1426;
+      --surface2:    #050a14;
+      --border:      #152d50;
+      --border2:     #1e4070;
+      --text:        #cce0ff;
+      --text-muted:  #5b8db8;
+      --text-dim:    #1e3d60;
+      --text-head:   #e8f4ff;
+      --accent:      #4fa3e3;
+      --header-bg:   linear-gradient(135deg,#0c1426 0%,#081020 100%);
+      --header-bd:   #152d50;
+      --badge-bg:    #0a1e36;
+      --badge-bd:    #1e4070;
+      --badge-color: #7ec8f7;
+    }
+    [data-theme="mocha"] {
+      --bg:          #1a120e;
+      --surface:     #2a1c16;
+      --surface2:    #120c08;
+      --border:      #4a3020;
+      --border2:     #6a4530;
+      --text:        #f0e4d4;
+      --text-muted:  #9a7060;
+      --text-dim:    #5a3e30;
+      --text-head:   #faf0e6;
+      --accent:      #e07040;
+      --header-bg:   linear-gradient(135deg,#2a1c16 0%,#1a1208 100%);
+      --header-bd:   #4a3020;
+      --badge-bg:    #2e1a10;
+      --badge-bd:    #6a4530;
+      --badge-color: #f0a070;
     }
 
-    /* ── Header ── */
+    /* ── Reset & base ─────────────────────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background .25s, color .25s;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────── */
     header {
-      background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%);
-      border-bottom: 1px solid #2d3748;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-bd);
       padding: 18px 32px;
       display: flex;
       align-items: center;
       gap: 14px;
     }
-    header .logo {
+    .logo {
       width: 42px; height: 42px;
       background: linear-gradient(135deg, #667eea, #764ba2);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
+      font-size: 20px; flex-shrink: 0;
     }
-    header h1 { font-size: 1.25rem; font-weight: 700; color: #f7fafc; }
-    header p  { font-size: 0.78rem; color: #718096; margin-top: 2px; }
-    .header-badge {
+    header h1 { font-size: 1.25rem; font-weight: 700; color: var(--text-head); }
+    header p  { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+    .header-right {
       margin-left: auto;
-      background: #1a365d;
-      border: 1px solid #2b6cb0;
-      color: #90cdf4;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-badge {
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-bd);
+      color: var(--badge-color);
       font-size: 0.7rem;
       padding: 4px 10px;
       border-radius: 20px;
       font-weight: 600;
+      white-space: nowrap;
     }
 
-    /* ── Layout ── */
+    /* ── Theme switcher ──────────────────────────────────────────────────── */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .theme-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .theme-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .theme-dot {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform .15s, border-color .15s;
+      outline: none;
+    }
+    .theme-dot:hover { transform: scale(1.2); }
+    .theme-dot.active { border-color: var(--text); }
+    .theme-dot[data-t="dark"]  { background: linear-gradient(135deg,#1a1f2e,#667eea); }
+    .theme-dot[data-t="light"] { background: linear-gradient(135deg,#f7fafc,#5a67d8); }
+    .theme-dot[data-t="ocean"] { background: linear-gradient(135deg,#0c1426,#4fa3e3); }
+    .theme-dot[data-t="mocha"] { background: linear-gradient(135deg,#2a1c16,#e07040); }
+
+    /* ── Layout ──────────────────────────────────────────────────────────── */
     .container {
       max-width: 1100px;
       margin: 0 auto;
@@ -53,47 +163,47 @@
       gap: 24px;
     }
 
-    /* ── Sidebar ── */
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
     .sidebar { display: flex; flex-direction: column; gap: 18px; }
 
     .card {
-      background: #1a1f2e;
-      border: 1px solid #2d3748;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 18px;
+      transition: background .25s, border-color .25s;
     }
     .card-title {
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #718096;
+      color: var(--text-muted);
       margin-bottom: 12px;
     }
 
-    /* User selector */
     .user-select {
       width: 100%;
-      background: #2d3748;
-      border: 1px solid #4a5568;
-      color: #e2e8f0;
+      background: var(--border);
+      border: 1px solid var(--border2);
+      color: var(--text);
       padding: 10px 12px;
       border-radius: 8px;
       font-size: 0.88rem;
       cursor: pointer;
       outline: none;
     }
-    .user-select:focus { border-color: #667eea; }
+    .user-select:focus { border-color: var(--accent); }
 
     .user-info {
       margin-top: 12px;
       padding: 12px;
-      background: #2d3748;
+      background: var(--border);
       border-radius: 8px;
       font-size: 0.82rem;
     }
-    .user-info .name { font-weight: 600; color: #f7fafc; margin-bottom: 6px; }
-    .user-info .dept { color: #a0aec0; margin-bottom: 8px; }
+    .user-info .name { font-weight: 600; color: var(--text-head); margin-bottom: 6px; }
+    .user-info .dept { color: var(--text-muted); margin-bottom: 8px; }
 
     .role-badge {
       display: inline-block;
@@ -102,36 +212,32 @@
       font-size: 0.7rem;
       font-weight: 700;
     }
-    .role-admin            { background: #553c9a; color: #e9d8fd; }
-    .role-hr_manager       { background: #2c7a7b; color: #b2f5ea; }
-    .role-finance_analyst  { background: #744210; color: #fefcbf; }
-    .role-engineer         { background: #1a365d; color: #bee3f8; }
+    .role-admin             { background: #553c9a; color: #e9d8fd; }
+    .role-hr_manager        { background: #2c7a7b; color: #b2f5ea; }
+    .role-finance_analyst   { background: #744210; color: #fefcbf; }
+    .role-engineer          { background: #1a365d; color: #bee3f8; }
     .role-compliance_officer{ background: #22543d; color: #c6f6d5; }
-    .role-employee         { background: #3d3d3d; color: #e2e8f0; }
+    .role-employee          { background: #3d3d3d; color: #e2e8f0; }
 
-    /* Permissions list */
-    .perm-list {
-      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
-    }
+    .perm-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
     .perm-tag {
-      background: #2d3748;
-      border: 1px solid #4a5568;
-      color: #a0aec0;
+      background: var(--border);
+      border: 1px solid var(--border2);
+      color: var(--text-muted);
       font-size: 0.65rem;
       padding: 2px 7px;
       border-radius: 4px;
     }
 
-    /* ── Main panel ── */
+    /* ── Main ────────────────────────────────────────────────────────────── */
     .main { display: flex; flex-direction: column; gap: 20px; }
 
-    /* Query box */
     .query-box { display: flex; flex-direction: column; gap: 10px; }
     textarea {
       width: 100%;
-      background: #1a1f2e;
-      border: 1px solid #2d3748;
-      color: #e2e8f0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
       padding: 14px;
       border-radius: 10px;
       font-size: 0.92rem;
@@ -140,10 +246,10 @@
       outline: none;
       font-family: inherit;
       line-height: 1.5;
-      transition: border-color 0.2s;
+      transition: border-color .2s, background .25s;
     }
-    textarea:focus { border-color: #667eea; }
-    textarea::placeholder { color: #4a5568; }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--text-dim); }
 
     .query-footer { display: flex; align-items: center; gap: 10px; }
     .btn-submit {
@@ -155,48 +261,47 @@
       font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
+      transition: opacity .2s, transform .1s;
     }
     .btn-submit:hover { opacity: 0.9; }
     .btn-submit:active { transform: scale(0.97); }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Sample queries */
     .samples { display: flex; flex-wrap: wrap; gap: 6px; }
     .sample-btn {
-      background: #2d3748;
-      border: 1px solid #4a5568;
-      color: #a0aec0;
+      background: var(--border);
+      border: 1px solid var(--border2);
+      color: var(--text-muted);
       padding: 5px 11px;
       border-radius: 20px;
       font-size: 0.73rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all .2s;
     }
-    .sample-btn:hover { background: #4a5568; color: #e2e8f0; }
+    .sample-btn:hover { background: var(--border2); color: var(--text); }
 
-    /* ── Loading ── */
+    /* ── Loading ─────────────────────────────────────────────────────────── */
     .loading {
       display: none;
       align-items: center;
       gap: 10px;
       padding: 16px;
-      background: #1a1f2e;
-      border: 1px solid #2d3748;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      color: #718096;
+      color: var(--text-muted);
       font-size: 0.85rem;
     }
     .spinner {
       width: 18px; height: 18px;
-      border: 2px solid #4a5568;
-      border-top-color: #667eea;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent);
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Result card ── */
+    /* ── Result ──────────────────────────────────────────────────────────── */
     .result { display: none; flex-direction: column; gap: 16px; }
 
     .result-header {
@@ -207,122 +312,85 @@
       gap: 8px;
     }
     .meta-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-    .pill {
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-    .pill-intent    { background: #1a365d; color: #90cdf4; border: 1px solid #2b6cb0; }
-    .pill-source    { background: #1c4532; color: #9ae6b4; border: 1px solid #276749; }
-    .pill-denied    { background: #4a1515; color: #feb2b2; border: 1px solid #742a2a; }
-    .pill-chunks    { background: #2d2d2d; color: #a0aec0; border: 1px solid #4a5568; }
-    .pill-latency   { background: #2d2d2d; color: #a0aec0; border: 1px solid #4a5568; }
-
-    .conf-badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 700;
-    }
+    .pill { font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .pill-intent  { background: #1a365d; color: #90cdf4; border: 1px solid #2b6cb0; }
+    .pill-source  { background: #1c4532; color: #9ae6b4; border: 1px solid #276749; }
+    .pill-denied  { background: #4a1515; color: #feb2b2; border: 1px solid #742a2a; }
+    .pill-chunks,.pill-latency { background: var(--border); color: var(--text-muted); border: 1px solid var(--border2); }
+    .conf-badge { padding: 4px 12px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
     .conf-HIGH   { background: #1c4532; color: #68d391; border: 1px solid #276749; }
     .conf-MEDIUM { background: #744210; color: #f6ad55; border: 1px solid #975a16; }
     .conf-LOW    { background: #4a1515; color: #fc8181; border: 1px solid #742a2a; }
 
     .answer-box {
-      background: #1a1f2e;
-      border: 1px solid #2d3748;
-      border-left: 3px solid #667eea;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
       border-radius: 10px;
       padding: 18px;
       font-size: 0.9rem;
       line-height: 1.7;
-      color: #e2e8f0;
+      color: var(--text);
       white-space: pre-wrap;
     }
-
     .citations-box {
-      background: #0d1117;
-      border: 1px solid #2d3748;
+      background: var(--surface2);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 14px;
-      font-size: 0.8rem;
-      color: #a0aec0;
+      font-size: .8rem;
+      color: var(--text-muted);
       font-family: monospace;
       white-space: pre-wrap;
     }
-
-    /* Retrieval trace */
     .trace-toggle {
       background: none;
-      border: 1px solid #2d3748;
-      color: #718096;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
       padding: 8px 14px;
       border-radius: 8px;
-      font-size: 0.78rem;
+      font-size: .78rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all .2s;
       width: 100%;
       text-align: left;
     }
-    .trace-toggle:hover { background: #2d3748; color: #e2e8f0; }
-
+    .trace-toggle:hover { background: var(--border); color: var(--text); }
     .trace-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .trace-item {
-      background: #0d1117;
-      border: 1px solid #2d3748;
+      background: var(--surface2);
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
-      font-size: 0.78rem;
+      font-size: .78rem;
     }
-    .trace-item .ti-header {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
-    }
+    .ti-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .ti-rank {
-      background: #2d3748;
-      color: #a0aec0;
+      background: var(--border);
+      color: var(--text-muted);
       width: 22px; height: 22px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+      font-size: .7rem; font-weight: 700; flex-shrink: 0;
     }
     .ti-source { color: #90cdf4; font-weight: 600; }
-    .ti-score  {
-      margin-left: auto;
-      background: #1a365d;
-      color: #90cdf4;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.68rem;
-    }
-    .ti-preview {
-      color: #718096;
-      line-height: 1.5;
-      font-family: monospace;
-      font-size: 0.74rem;
-    }
+    .ti-score { margin-left: auto; background: #1a365d; color: #90cdf4; padding: 2px 8px; border-radius: 4px; font-size: .68rem; }
+    .ti-preview { color: var(--text-muted); line-height: 1.5; font-family: monospace; font-size: .74rem; }
 
-    /* RBAC denied banner */
     .denied-banner {
       background: #2d1515;
       border: 1px solid #742a2a;
       border-radius: 8px;
       padding: 10px 14px;
-      font-size: 0.8rem;
+      font-size: .8rem;
       color: #feb2b2;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 50px 20px;
-      color: #4a5568;
-    }
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--text-dim); }
     .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
-    .empty-state p { font-size: 0.88rem; }
+    .empty-state p { font-size: .88rem; }
   </style>
 </head>
 <body>
@@ -333,12 +401,23 @@
     <h1>Enterprise RAG Intelligence System</h1>
     <p>Secure multi-source retrieval with RBAC enforcement &amp; explainability</p>
   </div>
-  <div class="header-badge">GPT-4o-mini · ChromaDB · SQLite</div>
+  <div class="header-right">
+    <div class="theme-switcher">
+      <span class="theme-label">Theme</span>
+      <div class="theme-dots">
+        <button class="theme-dot active" data-t="dark"  title="Dark"  onclick="setTheme('dark')"></button>
+        <button class="theme-dot"        data-t="light" title="Light" onclick="setTheme('light')"></button>
+        <button class="theme-dot"        data-t="ocean" title="Ocean" onclick="setTheme('ocean')"></button>
+        <button class="theme-dot"        data-t="mocha" title="Mocha" onclick="setTheme('mocha')"></button>
+      </div>
+    </div>
+    <div class="header-badge">GPT-4o-mini · ChromaDB · SQLite</div>
+  </div>
 </header>
 
 <div class="container">
 
-  <!-- ── Sidebar ── -->
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="card">
       <div class="card-title">Select User</div>
@@ -364,14 +443,14 @@
     </div>
   </aside>
 
-  <!-- ── Main ── -->
+  <!-- Main -->
   <main class="main">
     <div class="card query-box">
       <div class="card-title">Ask the Enterprise Assistant</div>
       <textarea id="queryInput" placeholder="Ask anything… e.g. What is the parental leave policy? What was Q4 2024 revenue?"></textarea>
       <div class="query-footer">
         <button class="btn-submit" id="submitBtn" onclick="submitQuery()">Submit Query</button>
-        <span id="statusText" style="font-size:0.78rem;color:#718096;"></span>
+        <span id="statusText" style="font-size:0.78rem;color:var(--text-muted);"></span>
       </div>
     </div>
 
@@ -399,7 +478,6 @@ const USERS = {
   eve:   { name:"Eve Davis",      role:"compliance_officer",  dept:"Legal",       perms:["compliance_docs","security_docs","audit_logs","access_logs","incident_reports","public"] },
   frank: { name:"Frank Miller",   role:"employee",            dept:"Sales",       perms:["hr_docs","project_db","public"] },
 };
-
 const SAMPLES = {
   alice: ["Show recent security alerts","What are all department budgets?","Show failed login attempts"],
   bob:   ["How many employees per department?","What is the parental leave policy?","List all employees in Engineering"],
@@ -409,6 +487,20 @@ const SAMPLES = {
   frank: ["What is the vacation policy?","How many PTO days do I get?","What health benefits does ACME offer?"],
 };
 
+// ── Theme ─────────────────────────────────────────────────────────────────
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('rag-theme', t);
+  document.querySelectorAll('.theme-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.t === t);
+  });
+}
+(function initTheme() {
+  const saved = localStorage.getItem('rag-theme') || 'dark';
+  setTheme(saved);
+})();
+
+// ── User change ───────────────────────────────────────────────────────────
 function onUserChange() {
   const uid = document.getElementById('userSelect').value;
   const u = USERS[uid];
@@ -418,26 +510,22 @@ function onUserChange() {
     <div class="dept">${u.dept}</div>
     <span class="role-badge role-${u.role}">${u.role.replace('_',' ')}</span>
   `;
-
   document.getElementById('permList').innerHTML =
     u.perms.map(p => `<span class="perm-tag">${p}</span>`).join('');
-
   document.getElementById('samples').innerHTML =
     SAMPLES[uid].map(s => `<button class="sample-btn" onclick="useSample('${s.replace(/'/g,"\\'")}')">↗ ${s}</button>`).join('');
-
   clearResult();
 }
 
-function useSample(q) {
-  document.getElementById('queryInput').value = q;
-}
+function useSample(q) { document.getElementById('queryInput').value = q; }
 
 function clearResult() {
   const r = document.getElementById('result');
   r.style.display = 'flex';
-  r.innerHTML = `<div class="empty-state" id="emptyState"><div class="icon">🔍</div><p>Submit a query to see grounded answers with citations</p></div>`;
+  r.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>Submit a query to see grounded answers with citations</p></div>`;
 }
 
+// ── Query ─────────────────────────────────────────────────────────────────
 async function submitQuery() {
   const uid   = document.getElementById('userSelect').value;
   const query = document.getElementById('queryInput').value.trim();
@@ -459,9 +547,9 @@ async function submitQuery() {
     });
     const data = await resp.json();
     renderResult(data);
-  } catch(e) {
+  } catch (e) {
     result.style.display = 'flex';
-    result.innerHTML = `<div style="color:#fc8181;font-size:0.85rem;">Error: ${e.message}</div>`;
+    result.innerHTML = `<div style="color:#fc8181;font-size:.85rem;">Error: ${e.message}</div>`;
   } finally {
     btn.disabled = false;
     loading.style.display = 'none';
@@ -471,14 +559,10 @@ async function submitQuery() {
 function renderResult(d) {
   const result = document.getElementById('result');
   result.style.display = 'flex';
-
-  const confLevel = d.confidence.split('—')[0].trim().split(' ')[0];
-  const sourcePills = d.sources_queried.map(s =>
-    `<span class="pill pill-source">${s}</span>`).join('');
-  const deniedPills = d.denied_categories.map(s =>
-    `<span class="pill pill-denied">🚫 ${s}</span>`).join('');
-
-  const traceHTML = d.retrieval_trace.map((t,i) => `
+  const confLevel  = d.confidence.split('—')[0].trim().split(' ')[0];
+  const sourcePills = d.sources_queried.map(s => `<span class="pill pill-source">${s}</span>`).join('');
+  const deniedPills = d.denied_categories.map(s => `<span class="pill pill-denied">🚫 ${s}</span>`).join('');
+  const traceHTML  = d.retrieval_trace.map(t => `
     <div class="trace-item">
       <div class="ti-header">
         <div class="ti-rank">${t.rank}</div>
@@ -487,41 +571,35 @@ function renderResult(d) {
       </div>
       <div class="ti-preview">${escHtml(t.content_preview)}</div>
     </div>`).join('');
-
   const deniedBanner = d.denied_categories.length ? `
     <div class="denied-banner">
-      🔒 <strong>RBAC:</strong> Access denied to — ${d.denied_categories.join(', ')}. Your role (${USERS[d.user.user_id].role}) does not have permission for these sources.
+      🔒 <strong>RBAC:</strong> Access denied to — ${d.denied_categories.join(', ')}. Your role (${USERS[d.user.user_id]?.role || d.user.role}) does not have permission for these sources.
     </div>` : '';
 
   result.innerHTML = `
     <div class="result-header">
       <div class="meta-pills">
-        ${d.intents.map(i=>`<span class="pill pill-intent">${i}</span>`).join('')}
-        ${sourcePills}
-        ${deniedPills}
+        ${d.intents.map(i => `<span class="pill pill-intent">${i}</span>`).join('')}
+        ${sourcePills}${deniedPills}
         <span class="pill pill-chunks">${d.chunks_used} chunks</span>
         <span class="pill pill-latency">${d.latency_ms}ms</span>
       </div>
       <span class="conf-badge conf-${confLevel}">${confLevel} confidence</span>
     </div>
-
     ${deniedBanner}
-
     <div>
-      <div class="card-title" style="margin-bottom:8px;">Answer</div>
+      <div class="card-title" style="margin-bottom:8px">Answer</div>
       <div class="answer-box">${escHtml(d.answer)}</div>
     </div>
-
     ${d.citations ? `
     <div>
-      <div class="card-title" style="margin-bottom:8px;">Citations</div>
+      <div class="card-title" style="margin-bottom:8px">Citations</div>
       <div class="citations-box">${escHtml(d.citations)}</div>
     </div>` : ''}
-
     ${d.retrieval_trace.length ? `
     <div>
       <button class="trace-toggle" onclick="toggleTrace(this)">▶ Retrieval Trace (${d.retrieval_trace.length} chunks retrieved)</button>
-      <div class="trace-list" style="display:none;">${traceHTML}</div>
+      <div class="trace-list" style="display:none">${traceHTML}</div>
     </div>` : ''}
   `;
 }
@@ -532,15 +610,11 @@ function toggleTrace(btn) {
   list.style.display = open ? 'none' : 'flex';
   btn.textContent = (open ? '▶' : '▼') + btn.textContent.slice(1);
 }
-
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// Init
 onUserChange();
-
-// Submit on Ctrl+Enter
 document.getElementById('queryInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitQuery();
 });
