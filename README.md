@@ -1,7 +1,7 @@
 # Enterprise RAG Intelligence System
 
 > A production-grade, secure Retrieval-Augmented Generation system over heterogeneous enterprise data silos with strict RBAC, multi-source retrieval, grounded citations, and full explainability.
-
+![overview](https://github.com/kancharlavamshi/enterprise-rag-system/blob/main/enterprise-rag-system.png)
 ---
 
 ## Versions
